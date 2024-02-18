@@ -1,0 +1,17 @@
+.optionContainer {
+    display: flex;
+    align-items: center;
+    gap: 10px; // Adjust as needed
+    width: 100%;
+  }
+  
+  .textArea {
+    width: 90%;
+  }
+  
+  .actionIcons {
+    display: flex;
+    align-items: center;
+    gap: 10px; // Provides space between icons
+  }
+  

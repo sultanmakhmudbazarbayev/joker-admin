@@ -1,0 +1,48 @@
+.questionCard {
+    border: 1px solid gray;
+    // margin: 10px 10px 0px 10px;
+    height: 180px;
+    width: 90%;
+    cursor: pointer;
+
+    img {
+        height: 100%;
+        width: 100%;
+    }
+}
+
+.questionList {
+    padding-top: 10px;
+    max-height: 100%;
+    &::-webkit-scrollbar {
+        display: none;
+      }
+    
+      /* Hide scrollbar for IE, Edge, and Firefox */
+      -ms-overflow-style: none;  /* IE and Edge */
+      scrollbar-width: none;  /* Firefox */
+      
+      overflow-y: scroll; /* Important for making content still scrollable */
+}
+
+.questionListItem {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.questionCardWrapper {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.addQuestion {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: -12px;
+}

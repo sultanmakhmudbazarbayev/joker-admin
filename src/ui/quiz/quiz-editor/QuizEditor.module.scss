@@ -1,0 +1,27 @@
+.editorContainer {
+  display: flex;
+  gap: 20px; /* Adjust the gap between elements */
+  padding: 20px; /* Padding around the container */
+  height: 90vh;
+  margin: 0px 20px 20px 20px;
+}
+
+.questionsList {
+  flex: 1; /* Adjust the flex value based on your layout needs */
+  border: 1px solid gray;
+  background-color: white;
+}
+
+.questionEditor {
+  flex: 4; /* Adjust the flex value based on your layout needs */
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+}
+
+.settingsSelectors {
+  flex: 1; /* Adjust the flex value based on your layout needs */
+  border: 1px solid gray;
+  background-color: white;
+  padding: 20px;
+}
