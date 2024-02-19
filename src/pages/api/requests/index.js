@@ -1,11 +1,11 @@
 import axios from "@/application/actions/axios";
 
-export const _createQuiz = async (postData) => {
-    return await axios.post("/quiz", postData)  
+export const _createQuiz = async (data) => {
+    return await axios.post("/quiz", data)  
 }
 
-export const _createQuestion = async (postData) => {
-    return await axios.post("/question", postData)  
+export const _createQuestion = async (data) => {
+    return await axios.post("/question", data)  
 }
 
 export const _fetchQuizzes = async () => {
@@ -22,4 +22,22 @@ export const _fetchQuestionById = async (id) => {
 
 export const _fetchRoundById = async (id) => {
     return await axios.get(`/rounds/${id}`);
+}
+
+
+
+export const _updateQuestionData = async (id, data) => {
+    return await axios.put(`/question/${id}`, data);
+}
+
+
+
+
+
+
+export const _saveImage = async (formData) => {
+    return await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/upload`, {
+        method: 'POST',
+        body: formData,
+    });
 }

@@ -7,12 +7,12 @@ import { setQuizData } from '@/application/store/reducers/quizSlice';
 import { setChosenQuestion } from '@/application/store/reducers/chosenQuestionSlice';
 
 const QuestionList = (props) => {
+    const dispatch = useDispatch();
     const { className } = props;
     const chosenRound = useSelector((state) => state.chosenRound.data);
     const quizData = useSelector((state) => state.quiz.data);
     
-    const dispatch = useDispatch();
-    const currentRound = quizData.rounds.find((round) => round.count === chosenRound.count);
+    const currentRound = quizData.rounds && chosenRound ? quizData.rounds.find((round) => round.count === chosenRound.count) : []
     const questions = currentRound ? currentRound.questions : [];
 
     const onQuestionClick = async (questionId) => {
