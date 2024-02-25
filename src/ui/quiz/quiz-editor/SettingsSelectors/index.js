@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Select, Spin } from 'antd';
 import { setChosenRound } from '@/application/store/reducers/chosenRoundSlice';
 import { setChosenQuestion } from '@/application/store/reducers/chosenQuestionSlice';
-import { _fetchQuestionTimeOptions, _fetchQuestionTypes } from '@/pages/api/requests';
+import { _fetchQuestionById, _fetchQuestionTimeOptions, _fetchQuestionTypes, _updateQuestionData } from '@/pages/api/requests';
 import styles from './SettingsSelector.module.scss';
 
 const { Option } = Select;
@@ -12,6 +12,7 @@ const SettingsSelectors = ({ className }) => {
   const dispatch = useDispatch();
   const rounds = useSelector(state => state.quiz.data.rounds || []);
   const currentRound = useSelector(state => state.chosenRound.data);
+  const question = useSelector(state => state.chosenQuestion.data);
   const [selectedRoundId, setSelectedRoundId] = useState(currentRound?.id);
   const [questionTypes, setQuestionTypes] = useState([]);
   const [selectedQuestionType, setSelectedQuestionType] = useState('');
@@ -24,6 +25,18 @@ const SettingsSelectors = ({ className }) => {
   }, [currentRound]);
 
   useEffect(() => {
+    if(question) {
+      setSelectedQuestionType(question.question_type_id)
+    }
+  }, [question]);
+
+  useEffect(() => {
+    if(question) {
+      setSelectedTimeOption(question.question_time_id)
+    }
+  }, [question]);
+
+  useEffect(() => {
     const fetchTypes = async () => {
       try {
         const data = await _fetchQuestionTypes();
@@ -33,6 +46,7 @@ const SettingsSelectors = ({ className }) => {
           console.error('Invalid data structure:', data);
           setQuestionTypes([]);
         }
+
       } catch (error) {
         console.error('Error fetching question types:', error);
         setQuestionTypes([]);
@@ -51,6 +65,7 @@ const SettingsSelectors = ({ className }) => {
           console.error('Invalid data structure:', data);
           setTimeOptions([]);
         }
+
       } catch (error) {
         console.error('Error fetching question types:', error);
         setTimeOptions([]);
@@ -59,17 +74,6 @@ const SettingsSelectors = ({ className }) => {
     fetchTimeOptions();
   }, []);
 
-  useEffect(() => {
-    if (questionTypes.length > 0) {
-      setSelectedQuestionType(questionTypes[0].id);
-    }
-  }, [questionTypes]); // This effect ensures that selectedQuestionType is updated after questionTypes
-
-  useEffect(() => {
-    if (timeOptions.length > 0) {
-      setSelectedTimeOption(timeOptions[0].id);
-    }
-  }, [questionTypes]); 
 
   const updateSelectedRound = (roundId) => {
     const newSelectedRound = rounds.find(round => round.id === roundId);
@@ -82,12 +86,21 @@ const SettingsSelectors = ({ className }) => {
     }
   };
 
-  const updateSelectedQuestionType = (id) => {
+  const updateSelectedQuestionType = async (id) => {
+    
+    await _updateQuestionData(question.id, {question_type_id: id});
+    const updatedQuestion = await _fetchQuestionById(question.id);
     setSelectedQuestionType(id);
+    dispatch(setChosenQuestion(updatedQuestion.data.question))
   };
 
-  const updateSelectedTimeOption = (id) => {
+  const updateSelectedTimeOption = async (id) => {
+
+    await _updateQuestionData(question.id, {question_time_id: id});
+    const uodatedQuestion = await _fetchQuestionById(question.id);
     setSelectedTimeOption(id);
+    dispatch(setChosenQuestion(uodatedQuestion.data.question))
+
   };
 
   const renderOptions = () => rounds.map(round => (
@@ -135,7 +148,7 @@ const SettingsSelectors = ({ className }) => {
         {renderQuestionTypeOptions()}
       </Select>
 
-      <h4 style={{ marginTop: "20px" }}>Question Type</h4>
+      <h4 style={{ marginTop: "20px" }}>Question Time Limit</h4>
       <Select
         value={selectedTimeOption}
         onChange={updateSelectedTimeOption}
