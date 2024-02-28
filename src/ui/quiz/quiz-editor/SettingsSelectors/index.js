@@ -240,7 +240,7 @@ const SettingsSelectors = ({ className }) => {
       <h4 style={{ marginTop: "20px" }}>Upload Audio</h4>
       <div onClick={() => inputAudioRef.current && inputAudioRef.current.click()} className={styles.audio}>
           {audio ? (
-              <audio src={audio} controls style={{
+              <audio src={process.env.NEXT_PUBLIC_BASE_URL + audio} controls style={{
                 width: "100%",
                 height: "100%",
                 borderRadius: "0px"
@@ -255,7 +255,7 @@ const SettingsSelectors = ({ className }) => {
       <h4 style={{ marginTop: "20px" }}>Upload Video</h4>
       <div onClick={() => inputVideoRef.current?.click()} className={styles.video}>
           {video ? (
-              <video src={video} controls alt="Uploaded"  />
+              <video src={process.env.NEXT_PUBLIC_BASE_URL + video} controls alt="Uploaded"  />
           ) : (
               <UploadOutlined style={{ fontSize: '24px', color: 'rgba(0,0,0,.45)' }} />
           )}

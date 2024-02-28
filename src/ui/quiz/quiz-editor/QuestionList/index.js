@@ -49,7 +49,7 @@ const QuestionList = (props) => {
                         <div className={styles.questionCardWrapper}>
                             <h4>Question {item.order}</h4>
                             <div className={styles.questionCard} onClick={() => onQuestionClick(item.id)}>
-                                <img src={item.image} alt={`Question ${item.order}`}></img>
+                                <img src={process.env.NEXT_PUBLIC_BASE_URL + item.image} alt={`Question ${item.order}`}></img>
                             </div>
                         </div>
                     </List.Item>
