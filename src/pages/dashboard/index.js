@@ -6,8 +6,6 @@ import QuizTable from "@/ui/quizzes";
 import { Modal, Form, Input } from 'antd';
 import { _createQuiz, _fetchQuizzes } from "../api/requests";
 
-import { dashHeaderStyles, createQuizButtonStyles } from "./styles";
-
 const Page = () => {
   const [quizzes, setQuizzes] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -59,7 +57,13 @@ const Page = () => {
   
   return (
     <>
-      <div style={dashHeaderStyles}>
+      <div style={{
+          display: "flex",
+          // justifyContent: "space-between",
+          width: "90%",
+          margin: "auto",
+          marginTop: "40px"
+      }}>
         <input
           type="text"
           placeholder="Search by quiz name"
@@ -68,7 +72,16 @@ const Page = () => {
           style={{ width: "30%", height: "30px" }}
         />
         <button
-          style={createQuizButtonStyles}
+          style={{
+            width: "16%",
+            marginLeft: "auto",
+            padding: "10px", 
+            backgroundColor: "purple", 
+            color: "white", 
+            border: "none",
+            borderRadius: "5px", 
+            cursor: "pointer",
+          }}
           onClick={showModal}
         >
           Create Quiz
