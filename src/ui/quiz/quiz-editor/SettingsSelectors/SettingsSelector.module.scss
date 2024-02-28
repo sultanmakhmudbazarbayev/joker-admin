@@ -1,0 +1,21 @@
+.audio {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    align-self: center;
+    border: 1px solid lightgray;
+    border-radius: 5px;
+    cursor: pointer;
+    height: 33px;
+}
+
+.video {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    align-self: center;
+    border: 1px solid lightgray;
+    border-radius: 5px;
+    cursor: pointer;
+    height: 33px;
+}

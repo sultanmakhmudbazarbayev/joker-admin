@@ -55,7 +55,14 @@ export const _fetchRoundById = async (id) => {
 
 
 export const _saveImage = async (formData) => {
-    return await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/upload`, {
+    return await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/upload-image`, {
+        method: 'POST',
+        body: formData,
+    });
+}
+
+export const _saveAudio = async (formData) => {
+    return await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/upload-audio`, {
         method: 'POST',
         body: formData,
     });

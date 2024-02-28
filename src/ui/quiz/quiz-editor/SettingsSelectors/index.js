@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Select, Spin } from 'antd';
 import { setChosenRound } from '@/application/store/reducers/chosenRoundSlice';
 import { setChosenQuestion } from '@/application/store/reducers/chosenQuestionSlice';
-import { _fetchQuestionById, _fetchQuestionTimeOptions, _fetchQuestionTypes, _updateQuestionData } from '@/pages/api/requests';
+import { Upload, Button, message } from 'antd';
+import { UploadOutlined } from '@ant-design/icons';
+import { _fetchQuestionById, _fetchQuestionTimeOptions, _fetchQuestionTypes, _saveAudio, _updateQuestionData } from '@/pages/api/requests';
 import styles from './SettingsSelector.module.scss';
 
 const { Option } = Select;
@@ -11,6 +13,8 @@ const { Option } = Select;
 const SettingsSelectors = ({ className }) => {
   const dispatch = useDispatch();
   const rounds = useSelector(state => state.quiz.data.rounds || []);
+  const inputAudioRef = useRef(null);
+  const inputVideoRef = useRef(null);
   const currentRound = useSelector(state => state.chosenRound.data);
   const question = useSelector(state => state.chosenQuestion.data);
   const [selectedRoundId, setSelectedRoundId] = useState(currentRound?.id);
@@ -18,6 +22,8 @@ const SettingsSelectors = ({ className }) => {
   const [selectedQuestionType, setSelectedQuestionType] = useState('');
   const [timeOptions, setTimeOptions] = useState([]);
   const [selectedTimeOption, setSelectedTimeOption] = useState('');
+  const [audio, setAudio] = useState(null);
+  const [video, setVideo] = useState(null);
 
 
   useEffect(() => {
@@ -27,6 +33,12 @@ const SettingsSelectors = ({ className }) => {
   useEffect(() => {
     if(question) {
       setSelectedQuestionType(question.question_type_id)
+    }
+  }, [question]);
+
+  useEffect(() => {
+    if(question) {
+      setAudio(question.audio)
     }
   }, [question]);
 
@@ -97,10 +109,78 @@ const SettingsSelectors = ({ className }) => {
   const updateSelectedTimeOption = async (id) => {
 
     await _updateQuestionData(question.id, {question_time_id: id});
-    const uodatedQuestion = await _fetchQuestionById(question.id);
+    const updatedQuestion = await _fetchQuestionById(question.id);
     setSelectedTimeOption(id);
-    dispatch(setChosenQuestion(uodatedQuestion.data.question))
+    dispatch(setChosenQuestion(updatedQuestion.data.question))
 
+  };
+
+  const handleVideoChange = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return message.error("No file selected.");
+
+    const formData = new FormData();
+    formData.append('video', file);
+
+    try {
+        // const response = await _saveImage(formData);
+        // if (!response.ok) throw new Error(`Failed to upload: ${response.statusText}`);
+
+        // const data = await response.json();
+        // const values = { image: data.url };
+        // const updateResponse = await _updateQuestionData(question.id, values);
+
+        // if (updateResponse.data.ok) {
+        //     message.success("Question image updated successfully.");
+        //     setShouldRefetchQuiz(true);
+        // } else {
+        //     message.error("Failed to update question image.");
+        // }
+    } catch (error) {
+        message.error(`Upload error: ${error.message}`);
+    }
+  };
+
+  const handleAudioChange = async (event) => {
+
+    console.log('handleAudioChange')
+
+    const file = event.target.files[0];
+    if (!file) return message.error("No file selected.");
+
+    const formData = new FormData();
+    formData.append('audio', file);
+
+    try {
+
+        console.log('handleAudioChange2')
+        const response = await _saveAudio(formData);
+
+        console.log('response', response)
+        
+        if (!response.ok) throw new Error(`Failed to upload: ${response.statusText}`);
+
+        console.log('response3')
+
+        const data = await response.json();
+        const values = { audio: data.url };
+
+        console.log('values audio', values.audio)
+        const updatedQuestion = await _updateQuestionData(question.id, values);
+
+        console.log('updatedQuestion-audio', updatedQuestion)
+        
+        if (updatedQuestion.data.ok) {
+          message.success("Question image updated successfully.");
+          
+          const updatedQuestion = await _fetchQuestionById(question.id);
+          dispatch(setChosenQuestion(updatedQuestion.data.question))
+        } else {
+          message.error("Failed to update question image.");
+        }
+    } catch (error) {
+        message.error(`Upload error: ${error.message}`);
+    }
   };
 
   const renderOptions = () => rounds.map(round => (
@@ -156,6 +236,31 @@ const SettingsSelectors = ({ className }) => {
       >
         {renderTimeOptions()}
       </Select>
+
+      <h4 style={{ marginTop: "20px" }}>Upload Audio</h4>
+      <div onClick={() => inputAudioRef.current && inputAudioRef.current.click()} className={styles.audio}>
+          {audio ? (
+              <audio src={audio} controls style={{
+                width: "100%",
+                height: "100%",
+                borderRadius: "0px"
+              }} />
+          ) : (
+            <UploadOutlined style={{ fontSize: '24px', color: 'rgba(0,0,0,.45)' }} />
+          )}
+          <input type="file" accept="audio/*" onChange={handleAudioChange} ref={inputAudioRef} style={{ display: "none" }} />
+      </div>
+
+
+      <h4 style={{ marginTop: "20px" }}>Upload Video</h4>
+      <div onClick={() => inputVideoRef.current?.click()} className={styles.video}>
+          {video ? (
+              <video src={video} controls alt="Uploaded"  />
+          ) : (
+              <UploadOutlined style={{ fontSize: '24px', color: 'rgba(0,0,0,.45)' }} />
+          )}
+          <input type='file' onChange={handleVideoChange} ref={inputVideoRef} style={{ display: "none" }} />
+      </div>
     </div>
   );
 };

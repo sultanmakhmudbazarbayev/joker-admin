@@ -1,13 +1,14 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { List, Input, Button, message } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import AnswerOption from './AnswerOption';
 import OpenAnswer from './OpenAnswer';
 import styles from './QuestionEditor.module.scss';
-import { _createQuestionAnswer, _fetchQuestionById, _fetchQuestionTypeById, _saveImage, _updateQuestionData } from '@/pages/api/requests';
+import { _createQuestionAnswer, _fetchQuestionById, _fetchQuestionTypeById, _saveImage, _updateQuestionAnswer, _updateQuestionData } from '@/pages/api/requests';
 import { fetchQuizData } from '@/application/actions/quiz';
 import { setChosenQuestion } from '@/application/store/reducers/chosenQuestionSlice';
+import { debounce } from 'lodash';
 
 
 const QuestionEditor = ({ className }) => {
@@ -21,6 +22,16 @@ const QuestionEditor = ({ className }) => {
     const question = useSelector(state => state.chosenQuestion.data);
     const quizId = useSelector(state => state.quiz.data.id);
     const [answers, setAnswers] = useState([]);
+
+    const updateQuestionText = useCallback(debounce(async (newText) => {
+        await _updateQuestionData(question.id, { question: newText });
+        
+        const updatedQuestion = await _fetchQuestionById(question.id);
+
+        console.log('updatedQuestion', updatedQuestion)
+
+        dispatch(setChosenQuestion(updatedQuestion.data.question));
+    }, 1000), [question]); // Debounce this function
     
 
     useEffect(() => {
@@ -32,25 +43,27 @@ const QuestionEditor = ({ className }) => {
     }, [shouldRefetchQuiz]);
 
     useEffect(() => {
-        setImage(question.image || '');
-        setQuestionText(question.question || '');
-        setAnswers(question.answers)
-
-        const fetchTypeById = async (id) => {
-            try {
-              const type = await _fetchQuestionTypeById(id);
-                
-              if(type.data.type.technical_name === 'with_answers') {
-                setIsWithOptions(true)
-              } else {
-                setIsWithOptions(false)
-              }
-      
-            } catch (error) {
-              console.error('Error fetching question type:', error);
-            }
-          };
-          fetchTypeById(question.question_type_id);
+        if(question) {
+            setImage(question.image || '');
+            setQuestionText(question.question || '');
+            setAnswers(question.answers)
+    
+            const fetchTypeById = async (id) => {
+                try {
+                  const type = await _fetchQuestionTypeById(id);
+                    
+                  if(type.data.type.technical_name === 'with_answers') {
+                    setIsWithOptions(true)
+                  } else {
+                    setIsWithOptions(false)
+                  }
+          
+                } catch (error) {
+                  console.error('Error fetching question type:', error);
+                }
+              };
+              fetchTypeById(question.question_type_id);
+        }
     }, [question]);
 
     const handleImageChange = async (event) => {
@@ -89,6 +102,12 @@ const QuestionEditor = ({ className }) => {
 
     }
 
+    const onTextChange = (e) => {
+        console.log("e.target.value", e.target.value)
+        setQuestionText(e.target.value);
+        updateQuestionText(e.target.value); // Update text in the backend debounced
+    };
+
     return (
         <div className={className}>
             <div className={styles.question}>
@@ -105,7 +124,7 @@ const QuestionEditor = ({ className }) => {
                     className={styles.textArea}
                     placeholder="Enter your question here"
                     value={questionText}
-                    onChange={e => setQuestionText(e.target.value)}
+                    onChange={onTextChange}
                 />
             </div>
                 
@@ -115,7 +134,7 @@ const QuestionEditor = ({ className }) => {
                     dataSource={answers}
                     renderItem={item => (
                         <List.Item>
-                            <AnswerOption answer={item} question={question}/>
+                            <AnswerOption key={item.id} answer={item} question={question}/>
                         </List.Item>
                     )}
                     footer={
@@ -125,7 +144,7 @@ const QuestionEditor = ({ className }) => {
                     }
                 /> : 
 
-                <OpenAnswer />
+                <OpenAnswer question={question} />
                 }
             </div> 
         </div>
