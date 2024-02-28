@@ -96,7 +96,7 @@ const AnswerOption = (props) => {
 
                 <div onClick={() => inputRef.current?.click()} style={{width: "50px", height: "60px", textAlign: "center", justifyContent: "center", alignItems: "center", display: "flex", cursor: "pointer"}}>
                     {image ? (
-                        <img src={image} alt="Uploaded" style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: "10px" }} />
+                        <img src={process.env.NEXT_PUBLIC_BASE_URL + image} alt="Uploaded" style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: "10px" }} />
                     ) : (
                         <UploadOutlined style={{ fontSize: '24px', color: 'rgba(0,0,0,.45)' }} />
                     )}
