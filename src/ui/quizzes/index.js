@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { disconnectSocket, initSocket, subscribeToEvent } from "@/socket";
 
 const QuizTable = ({ quizzes }) => {
   const tableStyle = {

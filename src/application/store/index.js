@@ -6,12 +6,14 @@ import quizReducer from './reducers/quizSlice';
 import chosenRoundReducer from './reducers/chosenRoundSlice';
 import chosenQuestionReducer from './reducers/chosenQuestionSlice';
 import questionDataReducer from './reducers/questionDataSlice';
+import socketClientReducer from './reducers/socketClientSlice';
 
 const rootReducer = combineReducers({
   quiz: quizReducer,
   question: questionDataReducer,
   chosenRound: chosenRoundReducer,
   chosenQuestion: chosenQuestionReducer,
+  socket: socketClientReducer
 });
 
 const persistConfig = {
