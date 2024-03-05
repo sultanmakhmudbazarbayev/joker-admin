@@ -47,11 +47,32 @@ export const _fetchRoundById = async (id) => {
 }
 
 
+export const _createTeam = async (data) => {
+    return await axios.post("/team", data)  
+}
+export const _fetchTeams = async () => {
+    return await axios.get("/teams");
+}
+export const _fetchTeamById = async (id) => {
+    return await axios.get(`/teams/${id}`);
+}
 
 
-
-
-
+export const _fetchPlayersByTeamId = async (teamId) => {
+    return await axios.get(`/players/${teamId}`);
+}
+export const _fetchPlayerById = async (id) => {
+    return await axios.get(`/player/${id}`);
+}
+export const _createPlayer = async (data) => {
+    return await axios.post("/player", data)  
+}
+export const _updatePlayer = async (id, data) => {
+    return await axios.put(`/player/${id}`, data)
+}
+export const _deletePlayer = async (id) => {
+    return await axios.delete(`/player/${id}`)
+}
 
 
 export const _saveImage = async (formData) => {

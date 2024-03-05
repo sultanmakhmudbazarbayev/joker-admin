@@ -1,0 +1,91 @@
+.editorContainer {
+    display: flex;
+    gap: 20px; /* Adjust the gap between elements */
+    padding: 20px; /* Padding around the container */
+    height: 90vh;
+    margin: 20px 20px 20px 20px;
+}
+
+.team {
+    flex: 1; /* Adjust the flex value based on your layout needs */
+    border: 1px solid gray;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0px 30px;
+    gap: 30px;
+    text-align: center;
+    align-items: center;
+    img {
+        width: 80%;
+    }
+}
+
+.playersList {
+    margin-top: 30px;
+}
+
+.playerCardWrapper {
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 10px;
+    .playerName {
+        border: solid 1px gray;
+        height: 100%;
+        width: 90%;
+    }
+    h4 {
+        margin: 0;
+        height: 100%;
+        width: 100%;
+        padding-left: 10px;
+    }
+}
+
+.playerListItem {
+    display: flex;
+    
+    cursor: pointer;
+}
+
+.players {
+    flex: 1; /* Adjust the flex value based on your layout needs */
+    border: 1px solid gray;
+    background-color: white;
+    padding: 20px 20px;
+
+    max-height: 100%;
+    &::-webkit-scrollbar {
+        display: none;
+      }
+    
+      /* Hide scrollbar for IE, Edge, and Firefox */
+      -ms-overflow-style: none;  /* IE and Edge */
+      scrollbar-width: none;  /* Firefox */
+      
+      overflow-y: scroll; /* Important for making content still scrollable */
+}
+
+.addPlayer {
+    display: flex;
+    justify-content: center;
+}
+
+.capitan {
+    flex: 1; /* Adjust the flex value based on your layout needs */
+    border: 1px solid gray;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0px 30px;
+    gap: 30px;
+    text-align: center;
+    align-items: center;
+    img {
+        width: 80%;
+    }
+}

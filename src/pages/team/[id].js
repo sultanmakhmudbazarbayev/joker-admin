@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from 'next/router';
-import QuizEditor from "@/ui/quiz/quiz-editor";
+import TeamEditor from "@/ui/team/";
 
 
 
@@ -9,7 +9,7 @@ const Page = () => {
   const { id } = router.query;
 
   return (
-    <QuizEditor id={id}/>
+    <TeamEditor id={id}/>
   );
 };
 
