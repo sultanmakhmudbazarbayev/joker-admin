@@ -2,8 +2,12 @@ import React, { useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { disconnectSocket, initSocket, subscribeToEvent } from "@/socket";
+import { setSessionQuizId } from "@/application/store/reducers/sessionQuizIdSlice";
+import { useDispatch } from "react-redux";
 
 const QuizTable = ({ quizzes }) => {
+  const dispatch = useDispatch();
+
   const tableStyle = {
     width: "90%",
     borderCollapse: "collapse",
@@ -41,7 +45,8 @@ const QuizTable = ({ quizzes }) => {
   };
 
   const handleStartSession = (id) => {
-    router.push(`/quiz-session/${id}`);
+    dispatch(setSessionQuizId({id: id}))
+    router.push(`/tablets/set-up`);
   };
 
   return (

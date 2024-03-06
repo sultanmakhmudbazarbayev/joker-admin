@@ -47,6 +47,12 @@ export const _fetchRoundById = async (id) => {
 }
 
 
+export const _setUpTabletsTeams = async (data) => {
+    return await axios.post("/set-tablets", data)  
+}
+
+
+
 export const _createTeam = async (data) => {
     return await axios.post("/team", data)  
 }
