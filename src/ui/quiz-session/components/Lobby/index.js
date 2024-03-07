@@ -7,6 +7,12 @@ const Lobby = (props) => {
   const {teams, handleStartGame} = props;
   const socketClient = useSelector((state) => state.socket.data);
 
+  useEffect(() => {
+    
+    
+  }, []);
+
+
   return (
     <div className="lobby">
       <h2>Lobby</h2>
