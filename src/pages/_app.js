@@ -7,6 +7,7 @@ import { ConfigProvider } from "antd";
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { store, persistor } from '@/application/store'; // Adjust the import path as necessary
+import SocketProvider from "@/context/socket";
 import ruRU from "antd/lib/locale/ru_RU";
 import NextProgress from "nextjs-progressbar";
 import dayjs from "dayjs";
@@ -27,6 +28,7 @@ export default function App({ Component, pageProps: { session, ...pageProps } })
       <PersistGate persistor={persistor}>
         <ConfigProvider locale={ruRU}>
           <SessionProvider session={session}>
+            <SocketProvider>
               <NextProgress color="#1677ff" />
               <div style={{ display: 'flex' }}>
                 {showSidebar && <Sidebar />}
@@ -34,6 +36,7 @@ export default function App({ Component, pageProps: { session, ...pageProps } })
                   <Component {...pageProps} />
                 </div>
               </div>
+            </SocketProvider>
           </SessionProvider>
         </ConfigProvider>
         </PersistGate>

@@ -1,0 +1,53 @@
+.playthrough {
+    display: flex;
+    gap: 20px; /* Adjust the gap between elements */
+    padding: 20px; /* Padding around the container */
+    height: 90vh;
+    margin: 30px 20px 20px 20px;
+  }
+
+.buttonBack {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+}
+
+  .buttons {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+
+    .button {
+        margin-top: 10px;
+    }
+  }
+  
+  .playthroughLeft {
+    flex: 1; /* Adjust the flex value based on your layout needs */
+    border: 1px solid gray;
+    background-color: white;
+    padding: 20px;
+    justify-content: space-between;
+    flex-direction: column;
+    display: flex;
+    position: relative;
+  }
+  
+  .playthroughCenter {
+    flex: 4; /* Adjust the flex value based on your layout needs */
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    border: 1px solid gray;
+  }
+  
+  .playthroughRight {
+    flex: 1; /* Adjust the flex value based on your layout needs */
+    border: 1px solid gray;
+    background-color: white;
+    padding: 20px;
+    justify-content: space-between;
+    flex-direction: column;
+    display: flex;
+    position: relative;
+  }

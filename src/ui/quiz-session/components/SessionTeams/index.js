@@ -5,7 +5,6 @@ import { useSelector } from 'react-redux';
 
 const SessionTeams= (props) => {
   const {teams, handleStartGame} = props;
-  const socketClient = useSelector((state) => state.socket.data);
 
   return (
     <div className="session-teams">

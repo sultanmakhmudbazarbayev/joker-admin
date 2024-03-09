@@ -6,13 +6,14 @@ import { _fetchTeams, _setUpTabletsTeams } from '@/pages/api/requests';
 import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
 import { emitEvent } from '@/socket';
+import useSocket from '@/hooks/useSocket';
 
 const { Option } = Select;
 
 const TabletsSetUp = () => {
     const router = useRouter();
     const sessionQuizId = useSelector((state) => state.sessionQuizId.data.id);
-    const socketClient = useSelector((state) => state.socket.data);
+    const socket = useSocket()
 
     const [includedTeams, setIncludedTeams] = useState([]);
     const [allTeams, setAllTeams] = useState([]);
@@ -59,7 +60,9 @@ const TabletsSetUp = () => {
             if(response.data.status) {
                 router.push(`/quiz-session/${sessionQuizId}`);
             }
-            emitEvent(socketClient, "start-session", "admin started new session")
+            if(socket) {
+                socket.emit("start-session", "admin started new session")
+            }
 
         }
 

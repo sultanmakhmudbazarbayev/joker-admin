@@ -5,7 +5,6 @@ import { useSelector } from 'react-redux';
 
 const Lobby = (props) => {
   const {teams, handleStartGame} = props;
-  const socketClient = useSelector((state) => state.socket.data);
 
   useEffect(() => {
     
@@ -51,7 +50,6 @@ const Lobby = (props) => {
           font-size: 18px;
         }
       `}</style>
-
             <Button
               type="primary"
               block

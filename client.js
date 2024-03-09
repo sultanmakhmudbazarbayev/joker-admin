@@ -1,10 +1,9 @@
 const axios = require('axios');
 const io = require('socket.io-client');
 
-const SERVER_URL = 'http://localhost:3001'; // Change to your server's URL and port
+const SERVER_URL = 'http://localhost:3001';
 const TABLET_NUMBER = 123;
 
-// Use an async function to handle asynchronous operations
 async function getTeamData(tablet_number) {
     try {
         const tabletResponse = await axios.get(`http://localhost:3001/tablet?number=${tablet_number}`);
@@ -15,7 +14,7 @@ async function getTeamData(tablet_number) {
         return teamResponse.data.data
     } catch (error) {
         console.error('Error fetching team data:', error);
-        return null; // Return null or an appropriate error indicator
+        return null;
     }
 }
 
@@ -30,12 +29,27 @@ socket.on('connect', () => {
 
 // Listening for custom events from the server
 socket.on('connect-tablet', async () => {
-    console.log('Tablet connection started');
     const team = await getTeamData(TABLET_NUMBER);
     if (team) {
-        console.log('teamData:', team);
         socket.emit("join-team", team); 
     }
+});
+
+socket.on('_next-slide', (data) => {
+    console.log('_next-slide ' + data);
+});
+
+socket.on('_next-round', (data) => {
+    console.log('_next-round ' + data);
+});
+
+socket.on('_start-round', (data) => {
+    console.log('_start-round ' + data);
+});
+
+socket.on('get-all-teams', (data) => {
+    const teams = data.teams
+    console.log('data', data)
 });
 
 
