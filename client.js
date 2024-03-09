@@ -54,7 +54,7 @@ socket.on('_get-all-teams', (data) => {
 
 socket.on("_get-questions", async ({questions}) => {
     console.log('questions', questions)
-  });
+});
 
 
 // Handling disconnection event
