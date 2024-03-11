@@ -20,11 +20,7 @@ const Sidebar = () => {
           <a title="Dashboard">Dashboard</a>
         </Link>
       </Menu.Item>
-      <Menu.Item key="2" icon={<TabletOutlined />}>
-        <Link href="/sessions" legacyBehavior>
-          <a title="Sessions">Sessions</a>
-        </Link>
-      </Menu.Item>
+
       <Menu.Item key="3" icon={<TeamOutlined />}>
         <Link href="/teams" legacyBehavior>
           <a title="Teams">Teams</a>

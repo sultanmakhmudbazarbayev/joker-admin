@@ -62,6 +62,10 @@ export const _fetchTeams = async () => {
 export const _fetchTeamById = async (id) => {
     return await axios.get(`/teams/${id}`);
 }
+export const _updateTeam = async (id, data) => {
+    return await axios.put(`/team/${id}`, data)
+}
+
 
 
 export const _fetchPlayersByTeamId = async (teamId) => {

@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styles from './TeamEditor.module.scss';
-import { Button, Checkbox, Form, Input, List, Modal } from "antd";
-import { DeleteOutlined } from '@ant-design/icons';
+import { Button, Checkbox, Form, Input, List, Modal, message } from "antd";
+import { DeleteOutlined, UploadOutlined } from '@ant-design/icons';
 
-import { _createPlayer, _deletePlayer, _fetchPlayersByTeamId, _fetchTeamById, _updatePlayer } from "@/pages/api/requests";
+import { _createPlayer, _deletePlayer, _fetchPlayersByTeamId, _fetchTeamById, _saveImage, _updatePlayer, _updateTeam } from "@/pages/api/requests";
 
 const TeamEditor = ({ id }) => {
   const [form] = Form.useForm();
@@ -14,6 +14,12 @@ const TeamEditor = ({ id }) => {
   const [capitan, setCapitan] = useState(null);
   const [isCapitan, setIsCapitan] = useState(null);
   const [playerName, setPlayerName] = useState("");
+
+  const inputRef = useRef(null);
+  const [teamImage, setTeamImage] = useState('');
+
+  const inputRefPlayer = useRef(null);
+  const [playerImage, setPlayerImage] = useState('');
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -43,6 +49,60 @@ const TeamEditor = ({ id }) => {
         isCaptain: player.is_capitan,
     });
     setIsModalOpen(true); 
+  };
+
+  const handleTeamImageChange = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return message.error("No file selected.");
+
+    const formData = new FormData();
+    formData.append('image', file);
+
+    try {
+        const response = await _saveImage(formData);
+        if (!response.ok) throw new Error(`Failed to upload: ${response.statusText}`);
+
+        const data = await response.json();
+        const values = { image: data.url };
+
+        const updateResponse = await _updateTeam(id, values);
+
+        if (updateResponse.data.status === 'OK') {
+            message.success("Team image updated successfully.");
+            setTeamImage(updateResponse.data.data.image)
+        } else {
+            message.error("Failed to update team image.");
+        }
+    } catch (error) {
+        message.error(`Upload error: ${error.message}`);
+    }
+  };
+
+  const handlePlayerImageChange = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return message.error("No file selected.");
+
+    const formData = new FormData();
+    formData.append('image', file);
+
+    try {
+        const response = await _saveImage(formData);
+        if (!response.ok) throw new Error(`Failed to upload: ${response.statusText}`);
+
+        const data = await response.json();
+        const values = { image: data.url };
+
+        const updateResponse = await _updatePlayer(capitan.id, values);
+
+        if (updateResponse.data.status === 'OK') {
+            message.success("Team image updated successfully.");
+            setPlayerImage(updateResponse.data.data.image)
+        } else {
+            message.error("Failed to update team image.");
+        }
+    } catch (error) {
+        message.error(`Upload error: ${error.message}`);
+    }
   };
 
   const handleOk = async () => {
@@ -101,6 +161,8 @@ const TeamEditor = ({ id }) => {
               setTeam(teamResponse.data.data);
               const captainResponse = playersResponse.data.data.find(player => player.id === teamResponse.data.data.capitan_id);
               setCapitan(captainResponse || null);
+              setPlayerImage(capitan?.image ? capitan.image : null)
+              setTeamImage(teamResponse.data.data.image ? teamResponse.data.data.image : null)
           }
       };
       fetchTeamAndPlayers();
@@ -110,7 +172,14 @@ const TeamEditor = ({ id }) => {
     <div className={styles.editorContainer}>
         <div className={styles.team}>
             <h1>Team</h1>
-            <img src="http://localhost:3001/images/default/no-image.jpg"></img>
+            <div onClick={() => inputRef.current?.click()}>
+                {teamImage ? (
+                    <img src={process.env.NEXT_PUBLIC_BASE_URL + teamImage} alt="Uploaded" style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: "10px" }} />
+                ) : (
+                    <UploadOutlined style={{ fontSize: '24px', color: 'rgba(0,0,0,.45)' }} />
+                )}
+                <input type='file' onChange={handleTeamImageChange} ref={inputRef} style={{ display: "none" }} />
+            </div>
             <h2>{team?.name}</h2>
         </div>
         <div className={styles.players}>
@@ -140,7 +209,18 @@ const TeamEditor = ({ id }) => {
         </div>
         <div className={styles.capitan}>
             <h1>Capitan</h1>
-            <img src={capitan?.image || "http://localhost:3001/images/default/no-image.jpg"} alt="Capitan"/>
+            
+                
+            <div onClick={() => inputRefPlayer.current?.click()}>
+                {playerImage ? (
+                    <img src={process.env.NEXT_PUBLIC_BASE_URL + playerImage} alt="Uploaded" style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: "10px" }} />
+                ) : (
+                    <UploadOutlined style={{ fontSize: '24px', color: 'rgba(0,0,0,.45)' }} />
+                )}
+                <input type='file' onChange={handlePlayerImageChange} ref={inputRefPlayer} style={{ display: "none" }} />
+            </div>
+            
+
             <h2>{capitan?.name || "No Capitan Assigned"}</h2>
         </div>
 
