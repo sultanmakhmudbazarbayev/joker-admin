@@ -17,6 +17,10 @@ const Playthrough = (props) => {
     socket.emit("next-slide", 'next-slide')
   }
 
+  const prevSlide = () => {
+    socket.emit("prev-slide", 'prev-slide')
+  }
+
   const nextRound = () => {
     socket.emit("next-round", 'next-round')
 }
@@ -47,7 +51,7 @@ useEffect(() => {
           block
           size="large"
           className={styles.buttonBack}
-          // onClick={handlePrevPage}
+          onClick={prevSlide}
         >
           Back
         </Button>
@@ -55,7 +59,7 @@ useEffect(() => {
 
 
       <div className={styles.playthroughCenter}>
-        <h1>Page: {}</h1>
+        <h1></h1>
       </div>
 
     

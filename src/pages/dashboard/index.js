@@ -64,13 +64,13 @@ const Page = () => {
           margin: "auto",
           marginTop: "40px"
       }}>
-        <input
+        {/* <input
           type="text"
           placeholder="Search by quiz name"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           style={{ width: "30%", height: "30px" }}
-        />
+        /> */}
         <button
           style={{
             width: "16%",

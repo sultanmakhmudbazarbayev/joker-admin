@@ -28,7 +28,7 @@ const Sidebar = () => {
       </Menu.Item>
       <Menu.Item key="4" 
         icon={<LogoutOutlined />} 
-        style={{ marginTop: "79vh", backgroundColor: "blue", color: "white", borderColor: "#ff4d4f", height: "5.5vh" }} 
+        style={{ marginTop: "85vh", backgroundColor: "blue", color: "white", borderColor: "#ff4d4f", height: "5.5vh" }} 
         onClick={handleSignOut}>
           <a title="Sign Out">Sign Out</a> {/* For sign-out, consider handling differently as it's an action */}
       </Menu.Item>
