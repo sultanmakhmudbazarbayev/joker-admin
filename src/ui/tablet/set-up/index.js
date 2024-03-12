@@ -4,9 +4,10 @@ import { MinusCircleOutlined } from '@ant-design/icons';
 import styles from './TabletSetUp.module.scss';
 import { _fetchTeams, _setUpTabletsTeams } from '@/pages/api/requests';
 import { useRouter } from 'next/router';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { emitEvent } from '@/socket';
 import useSocket from '@/hooks/useSocket';
+import { setTeams } from '@/application/store/reducers/teamsSlice';
 
 const { Option } = Select;
 
@@ -14,6 +15,8 @@ const TabletsSetUp = () => {
     const router = useRouter();
     const sessionQuizId = useSelector((state) => state.sessionQuizId.data.id);
     const socket = useSocket()
+
+    const dispatch = useDispatch();
 
     const [includedTeams, setIncludedTeams] = useState([]);
     const [allTeams, setAllTeams] = useState([]);
@@ -52,10 +55,11 @@ const TabletsSetUp = () => {
             }
         }
         if(!valid) {
-            message.error("All team must be configured (both team name and number)");
+            message.error("All teams must be configured (both team name and number)");
         } else {
             const response = await _setUpTabletsTeams({tablets: includedTeams})
 
+            dispatch(setTeams({teams: includedTeams}));
             
             if(response.data.status) {
                 router.push(`/quiz-session/${sessionQuizId}`);

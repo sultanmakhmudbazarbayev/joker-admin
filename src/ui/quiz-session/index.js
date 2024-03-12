@@ -51,7 +51,7 @@ const QuizSession = (props) => {
             {!teamsCreated && <SessionTeams />}
             {!quizStarted
             ? <Lobby teams={teams} handleStartGame={handleStartGame} />
-            : <Playthrough teams={teams} handleStartGame={handleStartGame} />}
+            : <Playthrough teams={teams} id={id} handleStartGame={handleStartGame} />}
         </>
     );
 };
