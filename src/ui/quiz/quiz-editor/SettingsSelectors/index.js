@@ -5,7 +5,7 @@ import { setChosenRound } from '@/application/store/reducers/chosenRoundSlice';
 import { setChosenQuestion } from '@/application/store/reducers/chosenQuestionSlice';
 import { Upload, Button, message } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
-import { _fetchQuestionById, _fetchQuestionTimeOptions, _fetchQuestionTypes, _saveAudio, _updateQuestionData } from '@/pages/api/requests';
+import { _fetchQuestionById, _fetchQuestionTimeOptions, _fetchQuestionTypes, _saveAudio, _saveVideo, _updateQuestionData } from '@/pages/api/requests';
 import styles from './SettingsSelector.module.scss';
 
 const { Option } = Select;
@@ -39,6 +39,7 @@ const SettingsSelectors = ({ className }) => {
   useEffect(() => {
     if(question) {
       setAudio(question.audio)
+      setVideo(question.video)
     }
   }, [question]);
 
@@ -123,22 +124,30 @@ const SettingsSelectors = ({ className }) => {
     formData.append('video', file);
 
     try {
-        // const response = await _saveImage(formData);
-        // if (!response.ok) throw new Error(`Failed to upload: ${response.statusText}`);
 
-        // const data = await response.json();
-        // const values = { image: data.url };
-        // const updateResponse = await _updateQuestionData(question.id, values);
+      const response = await _saveVideo(formData);
 
-        // if (updateResponse.data.ok) {
-        //     message.success("Question image updated successfully.");
-        //     setShouldRefetchQuiz(true);
-        // } else {
-        //     message.error("Failed to update question image.");
-        // }
-    } catch (error) {
-        message.error(`Upload error: ${error.message}`);
-    }
+      console.log('response', response)
+      
+      if (!response.ok) throw new Error(`Failed to upload: ${response.statusText}`);
+
+      const data = await response.json();
+      const values = { video: data.url };
+
+      const updatedQuestion = await _updateQuestionData(question.id, values);
+
+      
+      if (updatedQuestion.data.ok) {
+        message.success("Question video updated successfully.");
+        
+        const updatedQuestion = await _fetchQuestionById(question.id);
+        dispatch(setChosenQuestion(updatedQuestion.data.question))
+      } else {
+        message.error("Failed to update question video.");
+      }
+  } catch (error) {
+      message.error(`Upload error: ${error.message}`);
+  }
   };
 
   const handleAudioChange = async (event) => {
@@ -171,12 +180,12 @@ const SettingsSelectors = ({ className }) => {
         console.log('updatedQuestion-audio', updatedQuestion)
         
         if (updatedQuestion.data.ok) {
-          message.success("Question image updated successfully.");
+          message.success("Question audio updated successfully.");
           
           const updatedQuestion = await _fetchQuestionById(question.id);
           dispatch(setChosenQuestion(updatedQuestion.data.question))
         } else {
-          message.error("Failed to update question image.");
+          message.error("Failed to update question audio.");
         }
     } catch (error) {
         message.error(`Upload error: ${error.message}`);
@@ -255,7 +264,10 @@ const SettingsSelectors = ({ className }) => {
       <h4 style={{ marginTop: "20px" }}>Upload Video</h4>
       <div onClick={() => inputVideoRef.current?.click()} className={styles.video}>
           {video ? (
-              <video src={process.env.NEXT_PUBLIC_BASE_URL + video} controls alt="Uploaded"  />
+              <video src={process.env.NEXT_PUBLIC_BASE_URL + video} controls alt="Uploaded" style={{
+                width: "100%",
+                marginTop: "220px"
+              }}  />
           ) : (
               <UploadOutlined style={{ fontSize: '24px', color: 'rgba(0,0,0,.45)' }} />
           )}

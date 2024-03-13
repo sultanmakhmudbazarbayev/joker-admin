@@ -98,3 +98,10 @@ export const _saveAudio = async (formData) => {
         body: formData,
     });
 }
+
+export const _saveVideo = async (formData) => {
+    return await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/upload-video`, {
+        method: 'POST',
+        body: formData,
+    });
+}
