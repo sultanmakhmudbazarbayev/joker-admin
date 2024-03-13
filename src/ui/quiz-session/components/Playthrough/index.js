@@ -5,25 +5,19 @@ import styles from './Playthrough.module.scss';
 import { staticScreens, maxNumberOfSLides } from '@/constants';
 import useSocket from '@/hooks/useSocket';
 import { _fetchQuizById, _fetchRoundById } from '@/pages/api/requests';
+import { useRouter } from 'next/router';
 
 const { Option } = Select;
 const { Panel } = Collapse;
 
 const Playthrough = (props) => {
-  const [currentStage, setCurrentStage] = useState('slides'); // 'slides', 'round', 'results', 'total'
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [currentRound, setCurrentRound] = useState(0);
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [quizData, setQuizData] = useState(null);
-
+  const router = useRouter()
   const includedTeams = useSelector((state) => state.teams.data);
 
+  const [quizData, setQuizData] = useState(null);
   const [modalQuestions, setModalQuestions] = useState([])
   const [modalRounds, setRounds] = useState([])
   const [modalSelectedRound, setModalSelectedRound] = useState(null);
-  const [modalRoundResultsData, setModalRoundResultsData] = useState([]);
-
-
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const socket = useSocket();
@@ -49,14 +43,8 @@ const Playthrough = (props) => {
 
   const handleTeamInputChange = (round, question, team, e) => {
     
-    
     socket.emit("set-team-points", {roundId: round.id, questionId: question.id, teamId: team.id, points: e.target.value});
 
-
-
-
-
-    console.log(e.target.value)
   }
 
 
@@ -77,23 +65,30 @@ const startRound = () => {
 }
 
 const resultsAfterRound4 = () => {
+  setModalSelectedRound(null);
   setIsModalVisible(true)
+
   setRounds([quizData.rounds[0], quizData.rounds[1], quizData.rounds[2], quizData.rounds[3]])
-
-  console.log('teams', teams)
-  // socket.emit("get-quiz-session data", 'start-round')
-
-  console.log('set results after round 4')
 }
 
 const resultsAfterRound8 = () => {
+  setModalSelectedRound(null);
   setIsModalVisible(true)
+
   setRounds([quizData.rounds[4], quizData.rounds[5], quizData.rounds[6], quizData.rounds[7]])
   console.log('set results after round 8')
 }
 
+const resultsAfterRound9 = () => {
+  setModalSelectedRound(null);
+  setIsModalVisible(true)
+  setRounds([quizData.rounds[8]])
+  console.log('set results after round 9')
+}
+
 const finishGame = () => {
-  console.log('game finished')
+  
+  router.push(`/`);
 }
 
 useEffect(() => {
@@ -201,6 +196,18 @@ useEffect(() => {
             >
               Ввести данные после 8 раунда
             </Button>
+            <Button
+              type="primary"
+              block
+              size="large"
+              className={styles.button}
+              style={{
+                marginBottom: "40px"
+              }}
+              onClick={resultsAfterRound9}
+            >
+              Ввести данные 9 раунда
+            </Button>
             
           <Button
               type="primary"
@@ -209,7 +216,7 @@ useEffect(() => {
               className={styles.button}
               onClick={startRound}
             >
-              Следующий вопрос
+              Начать вопрос
             </Button>
             <Button
               type="primary"
@@ -218,7 +225,7 @@ useEffect(() => {
               className={styles.button}
               onClick={nextRound}
             >
-              Начать вопрос
+              Следующий вопрос
             </Button>
 
             <Button
@@ -239,7 +246,7 @@ useEffect(() => {
 
       <Modal title="Введите очки команд за каждый кон" width={1200} visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
         <Select
-          defaultValue="Выберите кон"
+          value={modalSelectedRound ? modalSelectedRound.id : "Выберите кон"}
           style={{ width: 200, marginBottom: 20, marginTop: 10 }}
           onChange={handleRoundChange}
         >
