@@ -24,10 +24,12 @@ const Playthrough = (props) => {
   const {teams, id: quizId} = props;
 
   const handleOk = () => {
+    setModalQuestions(null)
     setIsModalVisible(false);
   };
 
   const handleCancel = () => {
+    setModalQuestions(null)
     setIsModalVisible(false);
   };
 
@@ -255,7 +257,7 @@ useEffect(() => {
           ))}
         </Select>
         <Collapse accordion>
-          {modalQuestions.map(question => (
+          {modalQuestions && modalQuestions.map(question => (
             <Panel header={question.question} key={question.id}>
               <List
                 dataSource={teams}
