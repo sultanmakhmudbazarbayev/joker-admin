@@ -58,6 +58,10 @@ const Playthrough = (props) => {
     socket.emit("prev-slide", 'prev-slide')
   }
 
+  const sendJoker = () => {
+    socket.emit("joker", 'joker')
+  }
+
   const nextRound = () => {
     socket.emit("next-round", 'next-round')
 }
@@ -89,7 +93,7 @@ const resultsAfterRound9 = () => {
 }
 
 const finishGame = () => {
-  
+  socket.emit("finish", 'finish')
   router.push(`/`);
 }
 
@@ -144,6 +148,20 @@ useEffect(() => {
     <div className={styles.playthrough}>
       <div className={styles.playthroughLeft}>
         <div className={styles.buttons}>
+        <Button
+                type="primary"
+                block
+                size="large"
+                className={styles.button}
+                style={{
+                  width: "100%",
+                  marginBottom: "40px"
+                }}
+                onClick={sendJoker}
+              >
+                Joker
+              </Button>
+
           <Button
                 type="primary"
                 block
