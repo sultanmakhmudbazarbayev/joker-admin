@@ -133,7 +133,7 @@ const QuestionEditor = ({ className }) => {
                     marginLeft: "10px",
                     top: "0",
                     left: "0"
-                }}>Вопрос {question.order}</p>
+                }}>Вопрос {question ? question.order : ""}</p>
                 <div onClick={() => inputRef.current?.click()} className={styles.image}>
                     {image ? (
                         <img src={process.env.NEXT_PUBLIC_BASE_URL + image} alt="Uploaded" style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: "10px" }} />
