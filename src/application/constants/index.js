@@ -1,5 +1,10 @@
 export const CAPITAN_CARDS = [
     {
+        name: "Джокер",
+        technical_name: "joker",
+        id: 0
+    },
+    {
         name: "Король",
         technical_name: "king",
         id: 1
