@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { List, Input, Button, message } from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
+import { UploadOutlined, DeleteOutlined } from '@ant-design/icons';
 import AnswerOption from './AnswerOption';
 import OpenAnswer from './OpenAnswer';
 import styles from './QuestionEditor.module.scss';
@@ -108,9 +108,32 @@ const QuestionEditor = ({ className }) => {
         updateQuestionText(e.target.value); // Update text in the backend debounced
     };
 
+    const onDelete = async () => {
+        try {
+
+            const updateResponse = await _updateQuestionData(question.id, {image: null});
+
+            if (updateResponse.data.ok) {
+                message.success("Question image deleted successfully.");
+                setShouldRefetchQuiz(true);
+            } else {
+                message.error("Failed to delete question image.");
+            }
+        } catch (error) {
+            message.error(`Upload error: ${error.message}`);
+        }
+    }
+
     return (
         <div className={className}>
             <div className={styles.question}>
+                <p style={{
+                    position: "absolute",
+                    marginTop: "10px",
+                    marginLeft: "10px",
+                    top: "0",
+                    left: "0"
+                }}>Вопрос {question.order}</p>
                 <div onClick={() => inputRef.current?.click()} className={styles.image}>
                     {image ? (
                         <img src={process.env.NEXT_PUBLIC_BASE_URL + image} alt="Uploaded" style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: "10px" }} />
@@ -118,6 +141,14 @@ const QuestionEditor = ({ className }) => {
                         <UploadOutlined style={{ fontSize: '24px', color: 'rgba(0,0,0,.45)' }} />
                     )}
                     <input type='file' onChange={handleImageChange} ref={inputRef} style={{ display: "none" }} />
+                    <Button danger style={{
+                        position: "absolute",
+                        top: "0",
+                        right: "0"
+                    }} icon={<DeleteOutlined />} onClick={(e) => {
+                        e.stopPropagation(); // Stop event propagation
+                        onDelete();
+                    }} />
                 </div>
                 <Input.TextArea 
                     rows={10}

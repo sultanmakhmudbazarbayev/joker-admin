@@ -1,22 +1,22 @@
 import React, { useEffect, useRef, useState } from "react";
 import styles from './TeamEditor.module.scss';
-import { Button, Checkbox, Form, Input, List, Modal, message } from "antd";
+import { Button, Checkbox, Form, Input, List, Select, Modal, message } from "antd";
 import { DeleteOutlined, UploadOutlined } from '@ant-design/icons';
-
+import { CAPITAN_CARDS } from "@/application/constants";
 import { _createPlayer, _deletePlayer, _fetchPlayersByTeamId, _fetchTeamById, _saveImage, _updatePlayer, _updateTeam } from "@/pages/api/requests";
+
+const { Option } = Select;
 
 const TeamEditor = ({ id }) => {
   const [form] = Form.useForm();
   const [players, setPlayers] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPlayer, setSelectedPlayer] = useState(null);
-  const [team, setTeam] = useState(null);
   const [capitan, setCapitan] = useState(null);
   const [isCapitan, setIsCapitan] = useState(null);
   const [playerName, setPlayerName] = useState("");
+  const [capitanCard, setCapitanCard] = useState(null);
 
-  const inputRef = useRef(null);
-  const [teamImage, setTeamImage] = useState('');
 
   const inputRefPlayer = useRef(null);
   const [playerImage, setPlayerImage] = useState('');
@@ -42,40 +42,11 @@ const TeamEditor = ({ id }) => {
     setPlayerName(player.name);
     setIsCapitan(player.is_capitan);
 
-    console.log('player', player)
-
     form.setFieldsValue({
         playerName: player.name,
         isCaptain: player.is_capitan,
     });
     setIsModalOpen(true); 
-  };
-
-  const handleTeamImageChange = async (event) => {
-    const file = event.target.files[0];
-    if (!file) return message.error("No file selected.");
-
-    const formData = new FormData();
-    formData.append('image', file);
-
-    try {
-        const response = await _saveImage(formData);
-        if (!response.ok) throw new Error(`Failed to upload: ${response.statusText}`);
-
-        const data = await response.json();
-        const values = { image: data.url };
-
-        const updateResponse = await _updateTeam(id, values);
-
-        if (updateResponse.data.status === 'OK') {
-            message.success("Team image updated successfully.");
-            setTeamImage(updateResponse.data.data.image)
-        } else {
-            message.error("Failed to update team image.");
-        }
-    } catch (error) {
-        message.error(`Upload error: ${error.message}`);
-    }
   };
 
   const handlePlayerImageChange = async (event) => {
@@ -90,7 +61,7 @@ const TeamEditor = ({ id }) => {
         if (!response.ok) throw new Error(`Failed to upload: ${response.statusText}`);
 
         const data = await response.json();
-        const values = { image: data.url };
+        const values = { image: data.url, team_id: id };
 
         const updateResponse = await _updatePlayer(capitan.id, values);
 
@@ -105,11 +76,16 @@ const TeamEditor = ({ id }) => {
     }
   };
 
+  const updateCapitanCard = (value) => {
+    setCapitanCard(value)
+  }
+
   const handleOk = async () => {
     try {
         const values = {
             name: playerName,
             is_capitan: isCapitan,
+            card: capitanCard,
             team_id: id,
         };
 
@@ -158,33 +134,27 @@ const TeamEditor = ({ id }) => {
           }
           const teamResponse = await _fetchTeamById(id);
           if (teamResponse && teamResponse.data) {
-              setTeam(teamResponse.data.data);
               const captainResponse = playersResponse.data.data.find(player => player.id === teamResponse.data.data.capitan_id);
               setCapitan(captainResponse || null);
               setPlayerImage(capitan?.image ? capitan.image : null)
-              setTeamImage(teamResponse.data.data.image ? teamResponse.data.data.image : null)
           }
       };
       fetchTeamAndPlayers();
   }, [id, capitan]); 
 
+  const renderOptions = () => CAPITAN_CARDS.map(card => (
+    <Option key={card.id} value={card.technical_name}>{`${card.name}`}</Option>
+  ));
+
+
   return (
     <div className={styles.editorContainer}>
-        <div className={styles.team}>
-            <h1>Team</h1>
-            <div onClick={() => inputRef.current?.click()}>
-                {teamImage ? (
-                    <img src={process.env.NEXT_PUBLIC_BASE_URL + teamImage} alt="Uploaded" style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: "10px" }} />
-                ) : (
-                    <UploadOutlined style={{ fontSize: '24px', color: 'rgba(0,0,0,.45)' }} />
-                )}
-                <input type='file' onChange={handleTeamImageChange} ref={inputRef} style={{ display: "none" }} />
-            </div>
-            <h2>{team?.name}</h2>
-        </div>
+
         <div className={styles.players}>
 
-            <h2>Players count: {players.length}</h2>
+            <h2 style={{
+                textAlign: "center"
+            }}>Капитан</h2>
 
             <List
                 className={styles.playersList}
@@ -213,7 +183,7 @@ const TeamEditor = ({ id }) => {
                 
             <div onClick={() => inputRefPlayer.current?.click()}>
                 {playerImage ? (
-                    <img src={process.env.NEXT_PUBLIC_BASE_URL + playerImage} alt="Uploaded" style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: "10px" }} />
+                    <img src={process.env.NEXT_PUBLIC_BASE_URL + playerImage} alt="Uploaded" style={{ width: '100%', maxWidth: "640px", height: '100%', maxHeight: "640px", objectFit: 'contain', borderRadius: "10px" }} />
                 ) : (
                     <UploadOutlined style={{ fontSize: '24px', color: 'rgba(0,0,0,.45)' }} />
                 )}
@@ -245,6 +215,18 @@ const TeamEditor = ({ id }) => {
                     <Form.Item name="isCaptain" valuePropName="checked">
                         <Checkbox onChange={(e) => setIsCapitan(e.target.checked)}>Is Captain?</Checkbox>
                     </Form.Item>
+
+                    <Select
+                        defaultValue={'Карта'}
+                        onChange={updateCapitanCard}
+                        style={{
+                            width: "200px"
+                        }}
+                    >
+                        {renderOptions()}
+                    </Select>
+
+
                 </Form>
             </Modal>
         }

@@ -1,6 +1,8 @@
 .question {
+    position: relative;
     width: 100%;
     padding: 10px;
+    padding-top: 25px;
     height: 38%;
     border: 1px solid gray;
     display: flex;
@@ -18,6 +20,7 @@
     align-items: center; /* Vertically center */
     justify-content: center; /* Horizontally center */
     text-align: center;
+    position: relative;
     cursor: pointer;
   
     &:hover {

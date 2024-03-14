@@ -5,6 +5,7 @@ import styles from './QuestionList.module.scss';
 import { _createQuestion, _fetchQuestionById, _fetchQuizById } from '@/pages/api/requests';
 import { setQuizData } from '@/application/store/reducers/quizSlice';
 import { setChosenQuestion } from '@/application/store/reducers/chosenQuestionSlice';
+import { UploadOutlined, DeleteOutlined, FileImageOutlined } from '@ant-design/icons';
 
 const QuestionList = (props) => {
     const dispatch = useDispatch();
@@ -49,7 +50,10 @@ const QuestionList = (props) => {
                         <div className={styles.questionCardWrapper}>
                             <h4>Question {item.order}</h4>
                             <div className={styles.questionCard} onClick={() => onQuestionClick(item.id)}>
-                                <img src={process.env.NEXT_PUBLIC_BASE_URL + item.image} alt={`Question ${item.order}`}></img>
+                                {item.image 
+                                    ? <img src={process.env.NEXT_PUBLIC_BASE_URL + item.image} alt={`Question ${item.order}`}></img>
+                                    : <p1>No Image</p1>
+                                }
                             </div>
                         </div>
                     </List.Item>
