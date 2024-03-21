@@ -65,6 +65,9 @@ const Playthrough = (props) => {
   const nextRound = () => {
     socket.emit("next-round", 'next-round')
 }
+const prevRound = () => {
+  socket.emit("prev-round", 'prev-round')
+}
 
 const startRound = () => {
   socket.emit("start-round", 'start-round')
@@ -236,7 +239,7 @@ useEffect(() => {
               className={styles.button}
               onClick={startRound}
             >
-              Начать вопрос
+              Time Start
             </Button>
             <Button
               type="primary"
@@ -246,6 +249,15 @@ useEffect(() => {
               onClick={nextRound}
             >
               Следующий вопрос
+            </Button>
+            <Button
+              type="primary"
+              block
+              size="large"
+              className={styles.button}
+              onClick={prevRound}
+            >
+              Предыдущий вопрос
             </Button>
 
             <Button
