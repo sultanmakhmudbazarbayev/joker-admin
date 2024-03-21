@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
-import { Input, Checkbox, Button, message } from 'antd';
-import { UploadOutlined, DeleteOutlined } from '@ant-design/icons';
+import { Input, Checkbox, Button, message, Modal, Form } from 'antd';
+import { UploadOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { debounce } from 'lodash'; // Import debounce
 import styles from './AnswerOption.module.scss';
 import { _deleteQuestionAnswer, _fetchQuestionById, _saveImage, _updateQuestionAnswer } from '@/pages/api/requests';
@@ -14,6 +14,11 @@ const AnswerOption = (props) => {
     const [isCorrect, setIsCorrect] = useState(false);
     const [image, setImage] = useState();
     const [answerText, setAnswerText] = useState('');
+    const [commentText, setCommentText] = useState('');
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [audio, setAudio] = useState(null);
+    const inputAudioRef = useRef(null);
+    const form = useRef()
 
     useEffect(() => {
         if (answer) {
@@ -36,6 +41,10 @@ const AnswerOption = (props) => {
         const updatedQuestion = await _fetchQuestionById(question.id);
         dispatch(setChosenQuestion(updatedQuestion.data.question));
     };
+
+    const onEdit = () => {
+        setIsModalOpen(true)
+    }
 
     const onUpload = async (event) => {
             const file = event.target.files[0];
@@ -78,6 +87,41 @@ const AnswerOption = (props) => {
         updateAnswerText(e.target.value); // Update text in the backend debounced
     };
 
+
+      const handleOk = async () => {
+        try {
+
+            
+        } 
+        catch(err) {
+          if(err) {
+
+        }
+        }
+        setIsModalOpen(false);
+      };
+    
+      const handleCancel = () => {
+        setIsModalOpen(false);
+      };
+
+      const handleAudioChange = async (event) => {
+
+        console.log('handleAudioChange')
+    
+        const file = event.target.files[0];
+        if (!file) return message.error("No file selected.");
+    
+        const formData = new FormData();
+        formData.append('audio', file);
+    
+        try {
+    
+        } catch (error) {
+            message.error(`Upload error: ${error.message}`);
+        }
+      };
+
     return (
         <div className={styles.optionContainer}>
             <Checkbox
@@ -102,9 +146,51 @@ const AnswerOption = (props) => {
                     )}
                     <input type='file' onChange={onUpload} ref={inputRef} style={{ display: "none" }} />
                 </div>
+                
+                <Button icon={<EditOutlined />} onClick={onEdit} />
 
                 <Button danger icon={<DeleteOutlined />} onClick={onDelete} />
             </div>
+
+            {isModalOpen && <Modal title="Edit correct answer" open={isModalOpen} onOk={handleOk} onCancel={handleCancel} okText="Save" cancelText='Cancel'>
+                <Form layout="vertical" ref={form} autoComplete="off">
+                    <Form.Item
+                        name="comment"
+                        rules={[
+                        {
+                            required: true,
+                            message: "Данное поле обязательно для заполнения",
+                        },
+                        ]}
+                    >
+                        <Input
+                        placeholder="Комментарий"
+                        value={commentText}
+                        onChange={(e) => setCommentText(e.target.value)}
+                        />
+                    </Form.Item>
+                </Form>
+
+                <div onClick={() => inputAudioRef.current && inputAudioRef.current.click()} style={{
+                    display: "flex",
+                    textAlign: "center",
+                    alignItems: "center",
+                }}>
+                <h4 style={{ marginTop: "20px" }}>Upload Audio</h4>
+                    {audio ? (
+                        <audio src={process.env.NEXT_PUBLIC_BASE_URL + audio} controls style={{
+                            width: "100%",
+                            height: "100%",
+                            borderRadius: "0px"
+                        }} />
+                    ) : (
+                        <UploadOutlined style={{ fontSize: '24px', color: 'rgba(0,0,0,.45)' }} />
+                    )}
+                    <input type="file" accept="audio/*" onChange={handleAudioChange} ref={inputAudioRef} style={{ display: "none" }} />
+                </div>
+            </Modal>}
+
+
         </div>
     );
 };
