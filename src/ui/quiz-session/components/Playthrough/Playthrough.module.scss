@@ -21,8 +21,8 @@
   
 .playthroughLeft {
   flex: 1; /* Adjust the flex value based on your layout needs */
-  border: 1px solid gray;
-  background-color: white;
+  border: 1px solid black;
+  background-color: lightpink;
   justify-content: space-between;
   flex-direction: column;
   display: flex;
@@ -46,13 +46,14 @@
   display: flex;
   flex-direction: column;
   background-color: white;
-  border: 1px solid gray;
+  border: 1px solid black;
+  background-color: lightpink;
 }
   
 .playthroughRight {
   flex: 1; /* Adjust the flex value based on your layout needs */
-  border: 1px solid gray;
-  background-color: white;
+  border: 1px solid black;
+  background-color: lightpink;
   padding: 20px;
   justify-content: space-between;
   flex-direction: column;

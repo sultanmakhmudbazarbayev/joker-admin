@@ -23,13 +23,21 @@ const AnswerOption = (props) => {
     useEffect(() => {
         if (answer) {
             setIsCorrect(answer.correct);
-            setAnswerText(answer.answer)
-            setImage(answer.image)
+            setAnswerText(answer.answer);
+            setCommentText(answer.comment);
+            setImage(answer.image);
         }
     }, [answer]);
 
     const updateAnswerText = useCallback(debounce(async (newText) => {
         await _updateQuestionAnswer(answer.id, { answer: newText });
+        
+        const updatedQuestion = await _fetchQuestionById(question.id);
+        dispatch(setChosenQuestion(updatedQuestion.data.question));
+    }, 1000), [answer.id]); // Debounce this function
+
+    const updateCommentText = useCallback(debounce(async (newText) => {
+        await _updateQuestionAnswer(answer.id, { comment: newText });
         
         const updatedQuestion = await _fetchQuestionById(question.id);
         dispatch(setChosenQuestion(updatedQuestion.data.question));
@@ -87,10 +95,14 @@ const AnswerOption = (props) => {
         updateAnswerText(e.target.value); // Update text in the backend debounced
     };
 
+    const onCommentChange = (e) => {
+        setCommentText(e.target.value);
+        updateCommentText(e.target.value);
+    };
+
 
       const handleOk = async () => {
         try {
-
             
         } 
         catch(err) {
@@ -152,42 +164,18 @@ const AnswerOption = (props) => {
                 <Button danger icon={<DeleteOutlined />} onClick={onDelete} />
             </div>
 
-            {isModalOpen && <Modal title="Edit correct answer" open={isModalOpen} onOk={handleOk} onCancel={handleCancel} okText="Save" cancelText='Cancel'>
+            {isModalOpen && <Modal title="Comment" open={isModalOpen} onOk={handleOk} onCancel={handleCancel} okText="Save" cancelText='Cancel'>
                 <Form layout="vertical" ref={form} autoComplete="off">
                     <Form.Item
                         name="comment"
-                        rules={[
-                        {
-                            required: true,
-                            message: "Данное поле обязательно для заполнения",
-                        },
-                        ]}
                     >
-                        <Input
-                        placeholder="Комментарий"
+                    <Input.TextArea
+                        placeholder="Enter your comment here"
                         value={commentText}
-                        onChange={(e) => setCommentText(e.target.value)}
-                        />
+                        onChange={onCommentChange} // Updated to use onTextChange
+                    />
                     </Form.Item>
                 </Form>
-
-                <div onClick={() => inputAudioRef.current && inputAudioRef.current.click()} style={{
-                    display: "flex",
-                    textAlign: "center",
-                    alignItems: "center",
-                }}>
-                <h4 style={{ marginTop: "20px" }}>Upload Audio</h4>
-                    {audio ? (
-                        <audio src={process.env.NEXT_PUBLIC_BASE_URL + audio} controls style={{
-                            width: "100%",
-                            height: "100%",
-                            borderRadius: "0px"
-                        }} />
-                    ) : (
-                        <UploadOutlined style={{ fontSize: '24px', color: 'rgba(0,0,0,.45)' }} />
-                    )}
-                    <input type="file" accept="audio/*" onChange={handleAudioChange} ref={inputAudioRef} style={{ display: "none" }} />
-                </div>
             </Modal>}
 
 
