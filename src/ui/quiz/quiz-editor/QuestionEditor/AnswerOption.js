@@ -11,13 +11,15 @@ const AnswerOption = (props) => {
     const dispatch = useDispatch();
     const { answer, question } = props;
     const inputRef = useRef(null);
+    const correctInputRef = useRef(null);
     const audioRef = useRef(null);
     const videoRef = useRef(null);
     const [isCorrect, setIsCorrect] = useState(false);
     const [answerText, setAnswerText] = useState('');
     const [commentText, setCommentText] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [image, setImage] = useState();
+    const [image, setImage] = useState(null);
+    const [correctImage, setCorrectImage] = useState(null);
     const [audio, setAudio] = useState(null);
     const [video, setVideo] = useState(null);
     const form = useRef()
@@ -28,6 +30,7 @@ const AnswerOption = (props) => {
             setAnswerText(answer.answer);
             setCommentText(answer.comment);
             setImage(answer.image);
+            setCorrectImage(answer.correct_image);
             setAudio(answer.audio);
             setVideo(answer.video);
         }
@@ -50,6 +53,9 @@ const AnswerOption = (props) => {
             if(data.key === 'image') {
                 setImage(null);
             }
+            if(data.key === 'correct-image') {
+                setCorrectImage(null);
+            }
             if(data.key === 'audio') {
                 setAudio(null);
             }
@@ -62,6 +68,35 @@ const AnswerOption = (props) => {
     const onEdit = () => {
         setIsModalOpen(true)
     }
+
+    const onUploadCorrect = async (event) => {
+        const file = event.target.files[0];
+        if (!file) return message.error("No file selected.");
+
+        const formData = new FormData();
+        formData.append('image', file);
+
+        try {
+            const response = await _saveImage(formData);
+
+            const data = await response.json();
+
+            setCorrectImage(data.url)
+            const values = { correct_image: data.url };
+            console.log('values', values)   
+            const updateResponse = await _updateQuestionAnswer(answer.id, values);
+            
+            if(updateResponse) {
+                const updatedQuestion = await _fetchQuestionById(question.id);
+                dispatch(setChosenQuestion(updatedQuestion.data.question));
+                message.success("Question image updated successfully.");
+            } else {
+                message.error("Failed to update question image.");
+            }
+        } catch (error) {
+            message.error(`Upload error: ${error.message}`);
+        }
+};
 
     const onUpload = async (event) => {
             const file = event.target.files[0];
@@ -258,6 +293,30 @@ const AnswerOption = (props) => {
                     )}
                     <input type='file' onChange={onUpload} ref={inputRef} style={{ display: "none" }} />
                 </div>
+
+
+                
+                <h4 style={{position: "relative"}}>Добавить правильное изображение</h4>
+                <div onClick={() => correctInputRef.current?.click()} style={{width: "100%", height: "100px", textAlign: "center", justifyContent: "center", alignItems: "center", display: "flex", cursor: "pointer", marginBottom: "10px", position: "relative"}}>
+                    {correctImage ? (
+                        <div style={{width: "100%", height: "100px", textAlign: "center", justifyContent: "center", alignItems: "center", display: "flex", cursor: "pointer", marginBottom: "10px", position: "relative"}}>
+                        <img src={process.env.NEXT_PUBLIC_BASE_URL + correctImage} alt="Uploaded" style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: "10px" }} />
+                        <Button danger style={{
+                                    position: "absolute",
+                                    top: "0",
+                                    right: "0"
+                                }} icon={<DeleteOutlined />} onClick={(e) => {
+                                    e.stopPropagation(); // Stop event propagation
+                                    onDelete({image: null, key: 'correct-image', for: 'answer'});
+                        }} />
+                        </div>
+                    ) : (
+                        <UploadOutlined style={{ fontSize: '24px', color: 'rgba(0,0,0,.45)' }} />
+                    )}
+                    <input type='file' onChange={onUploadCorrect} ref={correctInputRef} style={{ display: "none" }} />
+                </div>
+                
+
 
                 <h4 style={{marginTop: "15px",position: "relative"}}>Добавить аудио</h4>
                 <div style={{width: "100%", height: "32px", position: "relative", textAlign: "center", cursor: "pointer", border: "1px solid lightgray", borderRadius: "5px"}} onClick={() => audioRef.current && audioRef.current.click()} className={styles.audio}>
