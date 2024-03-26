@@ -170,7 +170,7 @@ const QuestionEditor = ({ className }) => {
                     )}
                     footer={
                         <div className={styles.addOption}>
-                            <Button type="primary" onClick={onAddAnswerOption}>Add Option</Button>
+                            <Button type="primary" onClick={onAddAnswerOption}>Добавить вариант ответа</Button>
                         </div>
                     }
                 /> : 

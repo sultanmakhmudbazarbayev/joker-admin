@@ -34,7 +34,7 @@ const Header = () => {
 
   return (
     <div className={styles.headerContainer}>
-      <h2>{name}</h2>
+      <h2>Название квиза: {name}</h2>
       <div>
         <Button size={'large'} danger onClick={showDiscardModal}>Discard</Button>
       </div>

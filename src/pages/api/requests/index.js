@@ -17,6 +17,9 @@ export const _createQuestion = async (data) => {
 export const _fetchQuestionById = async (id) => {
     return await axios.get(`/question/${id}`);
 }
+export const _deleteQuestionById = async (id) => {
+    return await axios.delete(`/question/${id}`);
+}
 export const _updateQuestionData = async (id, data) => {
     return await axios.put(`/question/${id}`, data);
 }
@@ -39,6 +42,9 @@ export const _updateQuestionAnswer = async (id, data) => {
 }
 export const _deleteQuestionAnswer = async (id) => {
     return await axios.delete(`/answer/${id}`);
+}
+export const _createOrUpdateCorrectQuestionAnswer = async (questionId, values) => {
+    return await axios.post(`/correct-answer?question_id=${questionId}`, values);
 }
 
 
